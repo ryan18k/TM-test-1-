@@ -17,7 +17,6 @@ async function showAct(n){
 }
 
 async function runGame(){
-  setTimeout(()=>{ alert(JSON.stringify(Object.keys(PORTRAITS))); }, 2000);
   sceneEl.classList.remove('visible');
   stageHideAll();
 
@@ -43,15 +42,10 @@ async function runGame(){
   await say('Claude', 'Et ça s\'était bien passé.');
   await say('Gérard', 'Oui.');
   await say(null, 'Un silence. Gérard regardait par la fenêtre. Dehors, le ciel de mai palissait doucement.', true);
-
-  SCENE_CAST['Gérard'].key = 'gerard_calme';
-  stageShow('right', 'gerard_calme');
-
   await say('Gérard', 'Docteur Renard… si quelque chose tourne mal demain. Ma femme—');
 
   SCENE_CAST['Claude'].key = 'claude_inquiet';
   stageShow('left', 'claude_inquiet');
-  stageActivate('left');
 
   await say('Claude', 'Gérard.');
   await say('Gérard', 'Laissez-moi finir. Mes enfants ont sept et dix ans. Emma ne sait pas encore conduire. Je voudrais que vous sachiez que—');
@@ -94,26 +88,21 @@ async function runGame(){
   await showLocation('Appartement de Claude', '00 : 23');
 
   SCENE_CAST = {
-    'Claude': { slot:'left',  key:'claude_inquiet' },
-    'Lucas':  { slot:'right', key:'lucas_inquiet'  },
+    'Claude': { slot:'left',  key:'claude_pensif' },
+    'Lucas':  { slot:'right', key:'lucas_inquiet' },
   };
-  stageShow('left', 'claude_inquiet');
+  stageShow('left', 'claude_pensif');
   stageHide('right');
   stageActivate('left');
 
   await say(null, 'La bibliothèque. Les braises. Les dossiers éparpillés sur la table basse. Claude n\'avait pas dormi.', true);
   await say(null, 'Il y avait une photo encadrée sur l\'étagère — une femme souriante, des cheveux châtains, les yeux fermés face au soleil. Quatre ans.', true);
   await say(null, 'Gérard. L\'opération. Les risques. Ses mains. Étaient-elles encore assez sûres ?', true);
-
-  SCENE_CAST['Claude'].key = 'claude_pensif';
-  stageShow('left', 'claude_pensif');
-
   await say('Claude', '… Douze heures. Peut-être treize si on rencontre des complications vasculaires.');
   await say(null, 'Il ferma les yeux. Il pensa à Lucas endormi dans sa chambre. Ce fils qu\'il voyait si peu.', true);
 
   stageShow('right', 'lucas_inquiet');
   stageActivate('right');
-  SCENE_CAST['Lucas'].key = 'lucas_inquiet';
 
   await say('Lucas', 'Papa ?');
 
@@ -122,7 +111,6 @@ async function runGame(){
   stageActivate('left');
 
   await say('Claude', 'Lucas… Il est passé minuit. Qu\'est-ce que tu fais debout ?');
-
   stageActivate('right');
   await say('Lucas', 'Je sais pas. Je dormais pas.');
   await say('Claude', 'Tu as fait un cauchemar ?');
@@ -142,7 +130,6 @@ async function runGame(){
   stageActivate('left');
 
   await say('Claude', 'Viens là.');
-
   stageActivate('right');
   await say('Lucas', 'Il a des enfants, le monsieur ?');
   await say('Claude', 'Deux. Un peu plus grands que toi.');
@@ -282,7 +269,6 @@ async function runGame(){
   sceneEl.classList.add('visible');
 
   await say('Antoine', 'C\'est… incroyable. Comment vous saviez que c\'était là ?');
-
   stageActivate('left');
   await say('Claude', 'Je ne savais pas. Je sentais.');
   await say(null, 'Onze heures quarante-deux. L\'anévrisme était isolé. La suture, parfaite.', true);
@@ -295,7 +281,6 @@ async function runGame(){
   stageActivate('right');
 
   await say('Antoine', 'Moi ?');
-
   stageActivate('left');
   await say('Claude', 'Tu as regardé pendant onze heures. Maintenant tu fais. Je suis là.');
   await say(null, 'Antoine prit l\'aiguille. Ses mains tremblaient légèrement. Puis elles s\'arrêtèrent.', true);
@@ -456,7 +441,6 @@ async function startGame(){
   loadPortraits();
   if(_gameStarted) return;
   _gameStarted = true;
-  alert('startGame OK');
   AC = new (window.AudioContext || window.webkitAudioContext)();
   window._actx = AC;
   const splash = document.getElementById('splash-screen');
