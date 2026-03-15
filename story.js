@@ -22,6 +22,7 @@ async function runGame(){
 
   // ══════════════════════════════════════════
   // ACTE I — Chambre de Gérard
+  // Claude : scrubs uniquement (neutre, pensif)
   // ══════════════════════════════════════════
   await showAct(1);
   setProgress(5);
@@ -44,21 +45,22 @@ async function runGame(){
   await say(null, 'Un silence. Gérard regardait par la fenêtre. Dehors, le ciel de mai palissait doucement.', true);
   await say('Gérard', 'Docteur Renard… si quelque chose tourne mal demain. Ma femme—');
 
-  SCENE_CAST['Claude'].key = 'claude_inquiet';
-  stageShow('left', 'claude_inquiet');
+  SCENE_CAST['Claude'].key = 'claude_neutre';
+  stageShow('left', 'claude_neutre');
+  stageActivate('left');
 
   await say('Claude', 'Gérard.');
   await say('Gérard', 'Laissez-moi finir. Mes enfants ont sept et dix ans. Emma ne sait pas encore conduire. Je voudrais que vous sachiez que—');
 
-  SCENE_CAST['Claude'].key = 'claude_serieux';
-  stageShow('left', 'claude_serieux');
+  SCENE_CAST['Claude'].key = 'claude_neutre';
+  stageShow('left', 'claude_neutre');
 
   await say('Claude', 'Gérard, arrêtez. Je vous connais depuis six ans. J\'ai vu vos résultats, vos IRM, vos analyses. Et je vous dis : vous allez rentrer chez vous.');
   await say('Gérard', 'Vous pouvez me le promettre ?');
   await say(null, 'Claude hésita. Pas longtemps. Juste assez pour être honnête.', true);
 
-  SCENE_CAST['Claude'].key = 'claude_neutre';
-  stageShow('left', 'claude_neutre');
+  SCENE_CAST['Claude'].key = 'claude_pensif';
+  stageShow('left', 'claude_pensif');
 
   await say('Claude', 'Je peux vous promettre que je ferai tout ce qui est en mon pouvoir. Et que mon pouvoir est considérable.');
 
@@ -67,8 +69,8 @@ async function runGame(){
 
   await say('Gérard', '… Ça me suffit.');
 
-  SCENE_CAST['Claude'].key = 'claude_souriant';
-  stageShow('left', 'claude_souriant');
+  SCENE_CAST['Claude'].key = 'claude_neutre';
+  stageShow('left', 'claude_neutre');
 
   await say('Claude', 'Dormez. Vous aurez besoin de toutes vos forces.');
   await say('Gérard', 'Et vous ?');
@@ -78,6 +80,8 @@ async function runGame(){
 
   // ══════════════════════════════════════════
   // ACTE II — Appartement de Claude
+  // Claude : veste civile uniquement
+  // Lucas : pyjama rayé uniquement
   // ══════════════════════════════════════════
   await fadeOut(800); stageHideAll(); await sleep(200);
   await showAct(2);
@@ -88,16 +92,20 @@ async function runGame(){
   await showLocation('Appartement de Claude', '00 : 23');
 
   SCENE_CAST = {
-    'Claude': { slot:'left',  key:'claude_pensif' },
-    'Lucas':  { slot:'right', key:'lucas_inquiet' },
+    'Claude': { slot:'left',  key:'claude_serieux' },
+    'Lucas':  { slot:'right', key:'lucas_inquiet'  },
   };
-  stageShow('left', 'claude_pensif');
+  stageShow('left', 'claude_serieux');
   stageHide('right');
   stageActivate('left');
 
   await say(null, 'La bibliothèque. Les braises. Les dossiers éparpillés sur la table basse. Claude n\'avait pas dormi.', true);
   await say(null, 'Il y avait une photo encadrée sur l\'étagère — une femme souriante, des cheveux châtains, les yeux fermés face au soleil. Quatre ans.', true);
   await say(null, 'Gérard. L\'opération. Les risques. Ses mains. Étaient-elles encore assez sûres ?', true);
+
+  SCENE_CAST['Claude'].key = 'claude_inquiet';
+  stageShow('left', 'claude_inquiet');
+
   await say('Claude', '… Douze heures. Peut-être treize si on rencontre des complications vasculaires.');
   await say(null, 'Il ferma les yeux. Il pensa à Lucas endormi dans sa chambre. Ce fils qu\'il voyait si peu.', true);
 
@@ -106,8 +114,8 @@ async function runGame(){
 
   await say('Lucas', 'Papa ?');
 
-  SCENE_CAST['Claude'].key = 'claude_neutre';
-  stageShow('left', 'claude_neutre');
+  SCENE_CAST['Claude'].key = 'claude_serieux';
+  stageShow('left', 'claude_serieux');
   stageActivate('left');
 
   await say('Claude', 'Lucas… Il est passé minuit. Qu\'est-ce que tu fais debout ?');
@@ -139,8 +147,8 @@ async function runGame(){
 
   await say('Lucas', 'Alors tu dois le sauver. Pour eux.');
 
-  SCENE_CAST['Claude'].key = 'claude_neutre';
-  stageShow('left', 'claude_neutre');
+  SCENE_CAST['Claude'].key = 'claude_inquiet';
+  stageShow('left', 'claude_inquiet');
 
   await say('Claude', 'Je vais essayer, mon grand.');
 
@@ -155,6 +163,7 @@ async function runGame(){
 
   // ══════════════════════════════════════════
   // ACTE III — Bloc opératoire
+  // Claude + Antoine : masques uniquement
   // ══════════════════════════════════════════
   await fadeOut(800); stageHideAll(); await sleep(200);
   await showAct(3);
@@ -165,8 +174,8 @@ async function runGame(){
   await showLocation('CHUV — Bloc opératoire n°2', '15 : 37');
 
   SCENE_CAST = {
-    'Claude':  { slot:'left',  key:'claude_masque'  },
-    'Antoine': { slot:'right', key:'antoine_nerveux' },
+    'Claude':  { slot:'left',  key:'claude_masque'   },
+    'Antoine': { slot:'right', key:'antoine_nerveux'  },
   };
   stageShow('left',  'claude_masque');
   stageShow('right', 'antoine_nerveux');
@@ -224,9 +233,9 @@ async function runGame(){
   } while(mg1result === false);
 
   await fadeIn(400);
-  SCENE_CAST['Claude'].key  = 'claude_masque2';
+  SCENE_CAST['Claude'].key  = 'claude_masque';
   SCENE_CAST['Antoine'].key = 'antoine_masque';
-  stageShow('left',  'claude_masque2');
+  stageShow('left',  'claude_masque');
   stageShow('right', 'antoine_masque');
   stageActivate('left');
   sceneEl.classList.add('visible');
@@ -240,8 +249,8 @@ async function runGame(){
 
   await say('Antoine', 'Docteur Renard — les paramètres vitaux changent. Pression artérielle en baisse.');
 
-  SCENE_CAST['Claude'].key = 'claude_masque';
-  stageShow('left', 'claude_masque');
+  SCENE_CAST['Claude'].key = 'claude_masque2';
+  stageShow('left', 'claude_masque2');
   stageActivate('left');
 
   await say('Claude', 'Je vois. Augmentez la perfusion. Préparez une unité de sang O négatif.');
@@ -315,6 +324,7 @@ async function runGame(){
 
   // ══════════════════════════════════════════
   // ACTE IV — Couloir
+  // Claude : scrubs (retour hôpital sans masque)
   // ══════════════════════════════════════════
   await fadeOut(800); stageHideAll(); await sleep(200);
   await showAct(4);
@@ -324,8 +334,8 @@ async function runGame(){
   await fadeIn(600);
   await showLocation('CHUV — Couloir', '03 : 14');
 
-  SCENE_CAST = { 'Claude': { slot:'left', key:'claude_serieux' } };
-  stageShow('left', 'claude_serieux');
+  SCENE_CAST = { 'Claude': { slot:'left', key:'claude_neutre' } };
+  stageShow('left', 'claude_neutre');
   stageActivate('left');
 
   await say(null, 'Le couloir. Le silence de nuit. Les néons qui bourdonnaient.', true);
@@ -354,10 +364,10 @@ async function runGame(){
 
   if(choix === 'left'){
     SCENE_CAST = {
-      'Claude': { slot:'left',  key:'claude_souriant' },
-      'Gérard': { slot:'right', key:'gerard_calme'    },
+      'Claude': { slot:'left',  key:'claude_neutre'    },
+      'Gérard': { slot:'right', key:'gerard_calme'     },
     };
-    stageShow('left',  'claude_souriant');
+    stageShow('left',  'claude_neutre');
     stageShow('right', 'gerard_calme');
     stageActivate('left');
 
@@ -376,8 +386,8 @@ async function runGame(){
 
   } else if(choix === 'right'){
     SCENE_CAST = {
-      'Claude': { slot:'left',  key:'claude_neutre'  },
-      'Lucas':  { slot:'right', key:'lucas_soucieux' },
+      'Claude': { slot:'left',  key:'claude_neutre'   },
+      'Lucas':  { slot:'right', key:'lucas_soucieux'  },
     };
     stageShow('left',  'claude_neutre');
     stageShow('right', 'lucas_soucieux');
