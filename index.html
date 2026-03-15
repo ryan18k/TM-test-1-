@@ -16,17 +16,24 @@
 <canvas id="bg-canvas"></canvas>
 <div id="progress-bar"></div>
 
+<!-- SPLASH -->
 <div id="splash-screen">
   <div id="splash-inner">
-    <div id="splash-title"><span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral</div>
+    <div id="splash-title">
+      <span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral
+    </div>
     <div id="splash-sub">par Ryan Debabêche</div>
     <button id="splash-btn">commencer</button>
   </div>
 </div>
 
+<!-- ACT OVERLAY -->
 <div id="act-overlay"><div id="act-title-text"></div></div>
+
+<!-- FADE -->
 <div id="fade-overlay"></div>
 
+<!-- LOCATION BANNER -->
 <div id="location-banner">
   <div id="location-banner-inner">
     <div id="location-place"></div>
@@ -34,6 +41,7 @@
   </div>
 </div>
 
+<!-- SCENE -->
 <div id="scene">
   <div id="stage">
     <div class="char-slot left hidden"  id="slot-left"></div>
@@ -47,6 +55,7 @@
   </div>
 </div>
 
+<!-- MINIGAME -->
 <div id="mg-banner">
   <div id="mg-banner-inner">
     <div id="mg-banner-title"></div>
@@ -63,6 +72,7 @@
   <canvas id="minigame-canvas"></canvas>
 </div>
 
+<!-- CHOICE -->
 <div id="choice-screen">
   <div class="choice-half" id="choice-left" onclick="makeChoice('left')">
     <div class="pulse-dot" id="pulse-left"></div>
@@ -77,6 +87,7 @@
   <div id="choice-timer">10</div>
 </div>
 
+<!-- END SCREEN -->
 <div id="end-screen">
   <div id="end-content"></div>
   <div id="end-title-display"><span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral</div>
@@ -86,6 +97,7 @@
   </div>
 </div>
 
+<!-- CREDITS -->
 <div id="credits-screen">
   <h2><span style="font-size:1.18em;color:#5a6878">T</span>raitement&nbsp;<span style="font-size:1.18em;color:#5a6878">M</span>oral</h2>
   <p style="color:#5a6070;font-style:italic;margin-bottom:24px">Un jeu narratif sur l'éthique médicale</p>
@@ -96,12 +108,18 @@
   <button id="credits-back" onclick="hideCredits()">retour</button>
 </div>
 
+<!-- GAME TITLE -->
 <div id="game-title">
   <span style="color:#1e2840;font-size:1.15em">T</span>raitement
   <span style="color:#1e2840;font-size:1.15em">M</span>oral
 </div>
 
+<!-- PORTRAITS -->
+<div id="portrait-store" style="display:none"></div>
+
+<!-- SCRIPTS -->
 <script src="engine.js"></script>
 <script src="story.js"></script>
+
 </body>
 </html>
