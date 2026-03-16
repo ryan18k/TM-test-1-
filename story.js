@@ -235,13 +235,11 @@ async function runGame(){
     await say('Claude','Tu sais quoi faire. Je t\'ai tout montré. Les étapes sont claires.');
     await say('Antoine','Et si quelque chose tourne mal ? Favre ne survivra pas si—');
     await say('Claude','Et Lucas ne survivra pas si personne ne va là-bas.');
-    await say('Antoine','Vous m\'envoyez à la morgue avec Favre.');
-    await say(null,'La phrase résonna dans le bloc comme une accusation. Claude ne répondit pas tout de suite.',true);
-    await say('Claude','Non. Je t\'envoie te battre. Il y a une différence.');
+
     await say('Antoine','Si je rate—');
     await say('Claude','Antoine. Regarde-moi. Tu as les mains que j\'avais à ton âge. Peut-être meilleures. Je ne dis pas ça pour te rassurer — je le dis parce que c\'est vrai et que tu dois le savoir maintenant.');
-    await say('Antoine','Je ne suis pas prêt.');
-    await say('Claude','Personne n\'est jamais prêt pour ça. Personne. Ni moi ni toi ni personne. On y va quand même.');
+    await say('Antoine','Je ferai tout ce que je peux.');
+    await say('Claude','Je le sais. C\'est pour ça que je te fais confiance.');
   }
 
   await say(null,'Antoine ne dit plus rien. Il hocha la tête, une seule fois, et ses mâchoires se serrèrent.',true);
@@ -251,14 +249,12 @@ async function runGame(){
   await say(null,'Mais alors Antoine prit la parole, d\'une voix qu\'il essayait de garder stable.',true);
   await say('Antoine','Attendez. Attendez. Avant que vous partiez — ou que je parte. Il faut qu\'on soit sûrs. Complètement sûrs. Parce qu\'il n\'y a pas de troisième option.');
   await say('Claude','Je sais.');
-  await say('Antoine','Celui que vous choisissez de ne pas opérer — il a toutes les chances de ne pas s\'en sortir. Vous en êtes conscient ?');
-  await say('Claude','Je suis conscient.');
+  await say('Antoine','Chaque seconde compte. Dites-moi ce que vous décidez — et je m\'y consacre entièrement.');
   await say('Antoine','Alors faites votre choix. Définitivement. Parce qu\'une fois que l\'un de nous sort de ce bloc, il n\'y a plus de retour en arrière possible.');
   await say(null,'Claude regarda Gérard sur la table. L\'homme qui lui avait demandé une promesse la veille. Dont les enfants avaient neuf et douze ans.',true);
   await say(null,'Il pensa à Lucas. Neuf ans. Ses yeux trop grands. « Parce que si tu ne le sauves pas, ils vont vivre sans leur papa. Et moi je sais ce que c\'est. »',true);
   await say(null,'Il n\'y avait pas de bonne réponse. Il n\'y avait qu\'une décision.',true);
 
-  playMusicTension();
   sceneEl.classList.remove('visible');
   await sleep(400);
 
@@ -279,7 +275,7 @@ async function runGame(){
   await fadeOut(600); stageHideAll(); await sleep(300);
   await showAct(4,'or');
   setProgress(80);
-  await showLocation('CHUV — Blocs opératoires','12 : 00 — 14 : 47');
+  await showLocation('CHUV — Blocs opératoires','11 : 48 — 14 : 22');
 
   SCENE_CAST = {
     'Claude':  {key:'claude_masque'},
@@ -308,7 +304,7 @@ async function runGame(){
     await fadeIn(400);
     sceneEl.classList.add('visible');
 
-    await say(null,'Quatorze heures quarante-sept. Claude posa ses instruments.',true);
+    await say(null,'Quatorze heures vingt-deux. Claude posa ses instruments.',true);
     await say('Claude','C\'est fermé. La suture tient. Stabilisez et préparez la sortie de bloc.');
     await say(null,'Il retira ses gants. Il avait les mains qui ne tremblaient pas — c\'était l\'étrange grâce de la chirurgie, que la technique survive à l\'effondrement intérieur.',true);
     await say(null,'Maintenant il fallait savoir.',true);
@@ -343,12 +339,13 @@ async function runGame(){
     await fadeIn(400);
     sceneEl.classList.add('visible');
 
-    await say(null,'Quatorze heures quarante-sept. L\'hématome était évacué. La pression intracrânienne chutait.',true);
+    await say(null,'Quatorze heures dix-neuf. L\'hématome était évacué. La pression intracrânienne chutait.',true);
     await say(null,'Claude retira ses instruments lentement. Ses mains étaient parfaitement stables. C\'était la chose la plus difficile qu\'il ait jamais faite.',true);
     await say(null,'Maintenant il fallait savoir ce qui s\'était passé en bas.',true);
   }
 
   setProgress(88);
+  playMusicAmbiance();
 
   // ════════════════════════════════════════════════════════
   //  ACTE V — Ce qu'on apprend
@@ -356,7 +353,7 @@ async function runGame(){
   await fadeOut(800); stageHideAll(); await sleep(200);
   await showAct(5,'hospital');
   setProgress(92);
-  await showLocation('CHUV','15 : 12');
+  await showLocation('CHUV — Couloir du bloc','14 : 35');
 
   SCENE_CAST = {'Claude':{key:'claude_serieux'}};
 
@@ -430,11 +427,11 @@ async function runGame(){
 async function startGame(){
   if(_gameStarted)return;
   _gameStarted=true;
-  AC=new (window.AudioContext||window.webkitAudioContext)();
-  window._actx=AC;
-  initMusic();
-  setBgScene('hospital');
-  playMusicAmbiance();
+  if(!AC){
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    window._actx=AC;
+  }
+  if(AC.state==='suspended') AC.resume();
   const splash=document.getElementById('splash-screen');
   splash.classList.add('hiding');
   await sleep(900);
@@ -451,3 +448,27 @@ function restartGame(){
 }
 
 document.getElementById('splash-btn').addEventListener('click',startGame);
+
+// Musique principale dès le chargement (avant tout clic)
+(function autoStartMusic(){
+  function tryStart(){
+    if(!AC){
+      try{
+        AC=new (window.AudioContext||window.webkitAudioContext)();
+        window._actx=AC;
+        initMusic();
+        setBgScene('hospital');
+        // Sur mobile il faut un geste — on écoute le premier touch/click
+        if(AC.state==='suspended'){
+          const resume=()=>{ AC.resume().then(()=>{ playMusicAmbiance(); }); document.removeEventListener('touchstart',resume); document.removeEventListener('click',resume); };
+          document.addEventListener('touchstart',resume,{once:true,passive:true});
+          document.addEventListener('click',resume,{once:true});
+        } else {
+          playMusicAmbiance();
+        }
+      }catch(e){}
+    }
+  }
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tryStart);
+  else tryStart();
+})();
