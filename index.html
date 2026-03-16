@@ -10,299 +10,283 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>Traitement Moral</title>
 <style>
-* { margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent; }
-html,body{ width:100%;height:100%;background:#060608;overflow:hidden;font-family:Georgia,'Times New Roman',serif;color:#e8e6e0;touch-action:none;user-select:none; }
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:Georgia,'Times New Roman',serif;color:#e8e6e0;touch-action:none;user-select:none;}
 
-#bg-canvas{ position:fixed;inset:0;width:100%;height:100%;z-index:0; }
-#progress-bar{ position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,#2a4a5e,#4a7a9e);z-index:100;transition:width 0.8s ease; }
+/* ── BACKGROUND JPG ── */
+#bg-layer{
+  position:fixed;inset:0;z-index:0;
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:1;transition:opacity 0.6s ease;
+}
+#bg-layer.fading{opacity:0;}
+#bg-overlay{
+  position:fixed;inset:0;z-index:1;
+  background:linear-gradient(to bottom,rgba(4,5,8,0.38) 0%,rgba(4,5,8,0.50) 55%,rgba(4,5,8,0.94) 100%);
+  pointer-events:none;
+}
 
-/* ── SPLASH ─────────────────────────────────────────── */
+#progress-bar{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,#2a4a5e,#4a7a9e);z-index:100;transition:width 0.8s ease;}
+
+/* ── SPLASH ── */
 #splash-screen{
   position:fixed;inset:0;z-index:300;
-  background:transparent;
-  display:flex;align-items:center;justify-content:center;
-  flex-direction:column;
+  background:rgba(4,5,8,0.72);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;
   transition:opacity 0.9s ease;
 }
-#splash-screen.hiding{ opacity:0;pointer-events:none; }
-#splash-inner{ text-align:center; }
-#splash-title{
-  font-family:Georgia,serif;
-  font-size:clamp(24px,4.5vw,42px);
-  color:#3a4250;
-  letter-spacing:.18em;
-  text-transform:uppercase;
-  margin-bottom:10px;
-  line-height:1.1;
-}
-#splash-title .big{ color:#6a7888;font-size:1.22em;letter-spacing:.22em; }
-#splash-sub{
-  font-size:11px;color:#1e2530;letter-spacing:.28em;
-  text-transform:uppercase;margin-bottom:52px;
-  font-style:italic;
-}
-#splash-btn{
-  background:none;border:0.5px solid #2a3040;
-  color:#4a5060;font-family:Georgia,serif;
-  font-size:11px;letter-spacing:.25em;text-transform:uppercase;
-  padding:11px 34px;cursor:pointer;
-  transition:border-color .3s,color .3s;
-}
-#splash-btn:hover,#splash-btn:active{ border-color:#5a6070;color:#8a9098; }
+#splash-screen.hiding{opacity:0;pointer-events:none;}
+#splash-inner{text-align:center;}
+#splash-title{font-family:Georgia,serif;font-size:clamp(24px,4.5vw,42px);color:#3a4250;letter-spacing:.18em;text-transform:uppercase;margin-bottom:10px;line-height:1.1;}
+#splash-title .big{color:#6a7888;font-size:1.22em;letter-spacing:.22em;}
+#splash-sub{font-size:11px;color:#1e2530;letter-spacing:.28em;text-transform:uppercase;margin-bottom:52px;font-style:italic;}
+#splash-btn{background:none;border:0.5px solid #2a3040;color:#4a5060;font-family:Georgia,serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;padding:11px 34px;cursor:pointer;transition:border-color .3s,color .3s;}
+#splash-btn:hover,#splash-btn:active{border-color:#5a6070;color:#8a9098;}
 
-/* ── ACT OVERLAY ─────────────────────────────────────── */
-#act-overlay{
-  position:fixed;inset:0;background:#000;
-  display:flex;align-items:center;justify-content:center;
-  z-index:200;opacity:0;pointer-events:none;transition:opacity 0.6s ease;
-}
-#act-overlay.active{ pointer-events:all; }
-#act-title-text{ font-size:clamp(13px,2.5vw,20px);color:#3a4050;letter-spacing:.3em;text-align:center;text-transform:uppercase; }
+/* ── ACT OVERLAY ── */
+#act-overlay{position:fixed;inset:0;background:#000;display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.6s ease;}
+#act-overlay.active{pointer-events:all;}
+#act-title-text{font-size:clamp(13px,2.5vw,20px);color:#3a4050;letter-spacing:.3em;text-align:center;text-transform:uppercase;}
 
-/* ── FADE ────────────────────────────────────────────── */
-#fade-overlay{ position:fixed;inset:0;background:#000;z-index:150;opacity:0;pointer-events:none;transition:opacity 0.6s ease; }
+/* ── FADE ── */
+#fade-overlay{position:fixed;inset:0;background:#000;z-index:150;opacity:0;pointer-events:none;transition:opacity 0.6s ease;}
 
-/* ── LIEU/HEURE BANDEAU ──────────────────────────────── */
+/* ── LOCATION BANNER — contour blanc ── */
 #location-banner{
-  position:fixed;left:0;right:0;z-index:80;
+  position:fixed;left:0;right:0;z-index:90;
   display:flex;align-items:center;justify-content:center;
-  pointer-events:none;
-  transition: top 0.7s cubic-bezier(.4,0,.2,1),
-              transform 0.7s cubic-bezier(.4,0,.2,1),
-              opacity 0.5s ease;
-  opacity:0;top:50%;transform:translateY(-50%);
+  pointer-events:none;opacity:0;top:50%;transform:translateY(-50%);
+  transition:top 0.7s cubic-bezier(.4,0,.2,1),transform 0.7s cubic-bezier(.4,0,.2,1),opacity 0.5s ease;
 }
-#location-banner.center{ opacity:1;top:50%;transform:translateY(-50%); }
-#location-banner.top{    opacity:1;top:14px;transform:translateY(0) scale(0.78); }
+#location-banner.center{opacity:1;top:50%;transform:translateY(-50%);}
+#location-banner.top{opacity:1;top:8px;transform:translateY(0) scale(0.78);}
 #location-banner-inner{
-  background:rgba(4,5,8,0.88);border:0.5px solid rgba(255,255,255,0.07);
-  border-radius:2px;padding:14px 32px;text-align:center;
+  background:rgba(4,5,8,0.95);
+  border:1px solid rgba(255,255,255,0.22);
+  border-radius:3px;padding:11px 26px;text-align:center;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.05),0 4px 24px rgba(0,0,0,0.85);
 }
-#location-place{ font-size:clamp(13px,2.2vw,17px);color:#8a9098;letter-spacing:.18em;text-transform:uppercase;margin-bottom:4px; }
-#location-time{ font-size:clamp(20px,4vw,32px);color:#4a5868;letter-spacing:.12em;font-style:italic; }
+#location-place{font-size:clamp(10px,1.6vw,12px);color:#8a9098;letter-spacing:.22em;text-transform:uppercase;margin-bottom:2px;}
+#location-time{font-size:clamp(16px,3vw,24px);color:#c8d0d8;letter-spacing:.12em;font-style:italic;}
 
-/* ── SCENE ───────────────────────────────────────────── */
-#scene{
-  position:fixed;inset:0;z-index:10;
-  display:flex;flex-direction:column;justify-content:flex-end;
-  opacity:0;transition:opacity 0.5s ease;
-}
-#scene.visible{ opacity:1; }
+/* ── SCENE wrapper ── */
+#scene{position:fixed;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity 0.5s ease;}
+#scene.visible{opacity:1;pointer-events:auto;}
 
-/* ── STAGE ───────────────────────────────────────────── */
+/* ── STAGE — 1 seul personnage, haut-gauche de la boîte ── */
 #stage{
-  position:relative;
-  width:100%;
-  height:clamp(260px,46vh,440px);
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  /* #7 : le bas des sprites est recouvert par la boîte de dialogue */
-  margin-bottom:-80px;
+  position:fixed;
+  bottom:160px;
+  left:8px;
+  width:clamp(110px,17vw,190px);
+  height:clamp(190px,30vh,300px);
   pointer-events:none;
-  overflow:visible;
+  z-index:21;
 }
-.char-slot{
-  position:absolute;bottom:0;height:100%;
-  display:flex;align-items:flex-end;justify-content:center;
-  transition:opacity 0.4s ease, filter 0.4s ease;
+/* Un seul slot utilisé */
+#slot-main{
+  position:absolute;inset:0;
+  display:flex;align-items:flex-end;justify-content:flex-start;
+  transition:opacity 0.35s ease,filter 0.35s ease;
 }
-.char-slot.left  { left:2%; }
-.char-slot.right { right:2%; }
-.char-slot.center{ left:50%;transform:translateX(-50%); }
-.char-slot.hidden{ opacity:0;pointer-events:none; }
-.char-slot img{
-  height:100%;width:auto;
-  max-width:clamp(150px,30vw,300px);
-  object-fit:contain;
-  filter:drop-shadow(0 0 1.5px #000) drop-shadow(0 0 1.5px #000) drop-shadow(0 12px 32px rgba(0,0,0,0.9));
-  display:block;
+#slot-main.hidden{opacity:0;}
+#slot-main img{
+  height:100%;width:auto;max-width:100%;
+  object-fit:contain;display:block;
+  filter:drop-shadow(0 0 3px rgba(0,0,0,1)) drop-shadow(0 6px 18px rgba(0,0,0,0.95));
 }
-/* Personnage inactif : assombri */
-.char-slot.dimmed img{
-  filter:drop-shadow(0 0 1px #000) brightness(0.30) saturate(0.3);
+/* Personnage grisé : pensée du personnage */
+#slot-main.dimmed img{
+  filter:brightness(0.22) saturate(0.1) grayscale(0.8) drop-shadow(0 0 2px #000);
 }
-.char-slot.dimmed{ opacity:0.65; }
 
-/* ── DIALOGUE BOX ────────────────────────────────────── */
+/* ── DIALOGUE BOX — hauteur fixe, contour blanc ── */
 #dialogue-box{
-  position:relative;
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:160px;
   z-index:20;
-  align-self:center;
-  width:calc(100% - 24px);
-  max-width:760px;
-  margin:0 12px 32px;
-  /* Fond plus riche */
-  background:rgba(6,7,12,0.97);
-  border:0.5px solid rgba(255,255,255,0.10);
-  border-top:1px solid rgba(255,255,255,0.07);
-  border-radius:4px;
-  /* Légère lueur intérieure */
-  box-shadow:0 -4px 32px rgba(0,0,0,0.7), inset 0 1px 0 rgba(255,255,255,0.03);
-  padding:0;
+  background:rgba(5,6,10,0.97);
+  border-top:1px solid rgba(255,255,255,0.20);
+  box-shadow:0 -1px 0 rgba(255,255,255,0.06),0 -10px 40px rgba(0,0,0,0.75);
+}
+/* Ligne lumineuse décorative */
+#dialogue-box::before{
+  content:'';position:absolute;top:-1px;left:4%;right:4%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(160,200,230,0.18) 35%,rgba(160,200,230,0.28) 50%,rgba(160,200,230,0.18) 65%,transparent);
+}
+
+/* Nom du speaker */
+#speaker-name{
+  position:absolute;
+  top:11px;left:210px;right:16px;
+  font-size:clamp(12px,1.9vw,15px);
+  font-family:Georgia,serif;
+  letter-spacing:.22em;text-transform:uppercase;
+  color:#b8c8d4;
+  border-left:2px solid rgba(90,140,180,0.5);
+  padding-left:9px;line-height:1;
+  display:none;
+}
+/* Texte dialogue */
+#dialogue-text{
+  position:absolute;
+  top:36px;bottom:32px;
+  left:210px;right:16px;
+  font-size:clamp(14px,2vw,16px);
+  line-height:1.88;color:#dedad4;
   overflow:hidden;
 }
-
-/* Ligne décorative en haut de la boîte */
-#dialogue-box::before{
-  content:'';display:block;
-  height:1px;
-  background:linear-gradient(90deg,transparent,rgba(80,100,130,0.25),transparent);
-}
-
-/* Zone du nom du speaker — bandeau discret */
-#speaker-name{
-  display:none;
-  font-size:clamp(13px,2vw,15px);
-  font-family:Georgia,serif;
-  font-weight:normal;
-  letter-spacing:.20em;
-  text-transform:uppercase;
-  color:#9aabb8;
-  padding:10px 22px 0;
-  /* Trait gauche décoratif */
-  border-left:2px solid rgba(80,130,170,0.4);
-  margin:12px 16px 4px;
-  line-height:1;
-}
-
-/* Zone texte du dialogue */
-#dialogue-text{
-  font-size:clamp(15px,2.2vw,17px);
-  line-height:1.95;
-  color:#dedad2;
-  padding:10px 22px 44px;
-  min-height:64px;
-}
-
-/* Didascalies / narrateur : italique, accolades, couleur distincte */
+/* Indication scénique : guillemets (ajoutés dans story.js), italique, gris */
 #dialogue-text.thought{
-  color:#9a9488;
-  font-style:italic;
-  font-size:clamp(14px,2vw,16px);
+  color:#848280;font-style:italic;
+  left:20px; /* pas d'offset sprite */
 }
+/* Quand mode narration (pas de speaker) */
+#dialogue-box.narration #speaker-name{display:none!important;}
+#dialogue-box.narration #dialogue-text{left:20px;}
 
-/* Bouton continuer */
+/* Bouton continuer — caché jusqu'à fin du typewriter */
 #continue-btn{
-  position:absolute;bottom:12px;right:18px;
+  position:absolute;bottom:9px;right:15px;
   background:none;border:none;
-  color:#2e3848;
-  font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:#2e3848;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
   cursor:pointer;font-family:Georgia,serif;
-  transition:color .3s, opacity .3s;
-  opacity:0; /* géré par le typewriter */
+  opacity:0;pointer-events:none;
+  transition:color .3s,opacity .35s;
 }
-#continue-btn:hover{ color:#5a6878; }
-@keyframes btnPulse{ 0%,100%{color:#2e3848}50%{color:#4a5868} }
-.pulse-anim{ animation:btnPulse 1.6s ease-in-out infinite; }
+#continue-btn.ready{opacity:1;pointer-events:all;animation:btnPulse 1.8s ease-in-out infinite;}
+#continue-btn:hover{color:#6a7888;}
+@keyframes btnPulse{0%,100%{color:#2e3848}50%{color:#5a6878}}
 
-/* ── MINIGAME ────────────────────────────────────────── */
+/* ── MINIGAME ── */
 #minigame-container{
-  position:fixed;inset:0;z-index:20;
+  position:fixed;inset:0;z-index:40;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   opacity:0;pointer-events:none;transition:opacity 0.5s ease;
-  background:rgba(4,5,8,0.82);
+  background:rgba(4,5,8,0.90);
 }
-#minigame-container.active{ opacity:1;pointer-events:all; }
-#minigame-canvas{ border:0.5px solid rgba(255,255,255,0.07);border-radius:3px;background:rgba(4,5,8,0.97);touch-action:none; }
+#minigame-container.active{opacity:1;pointer-events:all;}
+#minigame-canvas{touch-action:none;display:block;}
 
+/* Bandeau mini-jeu — au-dessus du location banner (z:90), sous rien */
 #mg-banner{
-  position:fixed;left:0;right:0;z-index:25;
+  position:fixed;left:0;right:0;z-index:96;
   display:flex;align-items:center;justify-content:center;
   pointer-events:none;opacity:0;top:50%;transform:translateY(-50%);
   transition:top 0.7s cubic-bezier(.4,0,.2,1),transform 0.7s cubic-bezier(.4,0,.2,1),opacity 0.4s ease;
 }
-#mg-banner.center{ opacity:1;top:50%;transform:translateY(-50%); }
-#mg-banner.top   { opacity:1;top:0;transform:translateY(0); }
-#mg-banner-inner{ background:rgba(4,5,8,0.96);border:0.5px solid rgba(255,255,255,0.08);border-radius:2px;padding:22px 44px;text-align:center; }
-#mg-banner.top #mg-banner-inner{ padding:10px 130px; }
-#mg-banner-title{ font-size:clamp(20px,4vw,32px);color:#7a8898;letter-spacing:.2em;text-transform:uppercase;margin-bottom:10px;transition:font-size 0.7s ease; }
-#mg-banner.top #mg-banner-title{ font-size:clamp(12px,1.8vw,16px);margin-bottom:3px; }
-#mg-banner-sub{ font-size:clamp(14px,2.2vw,18px);color:#3a4a58;font-style:italic;transition:font-size 0.7s ease; }
-#mg-banner.top #mg-banner-sub{ font-size:clamp(10px,1.3vw,12px); }
+#mg-banner.center{opacity:1;top:50%;transform:translateY(-50%);}
+/* .top : se place SOUS le location-banner.top (≈50px) */
+#mg-banner.top{opacity:1;top:50px;transform:translateY(0);}
+#mg-banner-inner{
+  background:rgba(4,5,8,0.97);
+  border:1px solid rgba(255,255,255,0.20);
+  border-radius:3px;padding:18px 36px;text-align:center;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 4px 20px rgba(0,0,0,0.8);
+}
+#mg-banner.top #mg-banner-inner{padding:7px 32px;}
+#mg-banner-title{font-size:clamp(17px,3.2vw,26px);color:#7a8898;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px;transition:font-size 0.6s;}
+#mg-banner.top #mg-banner-title{font-size:clamp(10px,1.5vw,13px);margin-bottom:1px;}
+#mg-banner-sub{font-size:clamp(12px,1.9vw,15px);color:#3a4a58;font-style:italic;transition:font-size 0.6s;}
+#mg-banner.top #mg-banner-sub{font-size:clamp(9px,1.1vw,11px);}
 
+/* Compteurs mini-jeu */
 #mg-counter-errors,#mg-counter-score{
-  position:fixed;top:0;z-index:26;
+  position:fixed;top:0;z-index:97;
   display:none;align-items:center;justify-content:center;
   flex-direction:column;padding:6px 14px;min-width:80px;
 }
-#mg-counter-errors{ left:0; }
-#mg-counter-score{ right:0; }
-.mg-count-val{ font-size:clamp(30px,7vw,52px);font-family:Georgia,serif;line-height:1;transition:transform 0.12s ease; }
-.mg-count-val.flash{ transform:scale(1.4) !important; }
-.mg-count-label{ font-size:clamp(8px,1.1vw,10px);letter-spacing:.18em;text-transform:uppercase;margin-top:3px; }
-#mg-counter-errors .mg-count-val{ color:#8a3232; }
-#mg-counter-errors .mg-count-label{ color:#4a2828; }
-#mg-counter-score  .mg-count-val{ color:#3a7080; }
-#mg-counter-score  .mg-count-label{ color:#2a4050; }
+#mg-counter-errors{left:0;}
+#mg-counter-score{right:0;}
+.mg-count-val{font-size:clamp(28px,6vw,48px);font-family:Georgia,serif;line-height:1;transition:transform 0.12s ease;}
+.mg-count-val.flash{transform:scale(1.4)!important;}
+.mg-count-label{font-size:clamp(8px,1vw,10px);letter-spacing:.18em;text-transform:uppercase;margin-top:3px;}
+#mg-counter-errors .mg-count-val{color:#8a3232;}
+#mg-counter-errors .mg-count-label{color:#4a2828;}
+#mg-counter-score .mg-count-val{color:#3a7080;}
+#mg-counter-score .mg-count-label{color:#2a4050;}
 
-/* ── CHOICE ──────────────────────────────────────────── */
-#choice-screen{ position:fixed;inset:0;z-index:30;display:flex;opacity:0;pointer-events:none;transition:opacity 0.5s ease; }
-#choice-screen.active{ opacity:1;pointer-events:all; }
-.choice-half{ flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;padding:24px;transition:background .3s; }
-.choice-half:first-child{ border-right:.5px solid rgba(255,255,255,0.04); }
-.choice-half:hover,.choice-half:active{ background:rgba(255,255,255,0.022); }
-.choice-label{ font-size:clamp(12px,2.2vw,15px);line-height:1.8;color:#7a7870;text-align:center;max-width:220px;font-style:italic; }
-.choice-sublabel{ font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#2e3440;margin-top:10px; }
-#choice-timer{ position:absolute;bottom:56px;left:0;right:0;text-align:center;font-size:28px;color:#2e3440;transition:color .3s; }
-#choice-timer.urgent{ color:#8a2020; }
-.pulse-dot{ width:7px;height:7px;border-radius:50%;background:#2a4050;animation:pdot 1.2s ease-in-out infinite;margin-bottom:18px; }
-@keyframes pdot{ 0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)} }
-.pulse-dot.fast{ animation-duration:.5s; }
-
-/* ── END SCREEN ──────────────────────────────────────── */
-#end-screen{
-  position:fixed;inset:0;background:#000;z-index:180;
+/* ── ÉCRAN ÉCHEC MINI-JEU ── */
+#mg-fail-overlay{
+  position:fixed;inset:0;z-index:50;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 24px;opacity:0;pointer-events:none;transition:opacity 1s ease;
+  background:rgba(4,5,8,0.93);
+  opacity:0;pointer-events:none;transition:opacity 0.4s ease;
 }
-#end-screen.active{ opacity:1;pointer-events:all; }
-#end-content{ max-width:560px;text-align:left; }
-.end-line{ font-size:15px;line-height:2;color:#b8b4a8;font-style:italic;opacity:0;transition:opacity 1.2s ease;display:block; }
-.end-line.shown{ opacity:1; }
-#end-title-display{ font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#1e2530;margin-top:44px;text-align:center;opacity:0;transition:opacity 1s ease; }
-#end-buttons{ display:flex;gap:24px;margin-top:28px;justify-content:center; }
-#restart-btn,#credits-btn{ background:none;border:none;color:#2e3440;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:Georgia,serif;opacity:0;transition:opacity 1s ease,color .3s; }
-#restart-btn.shown,#credits-btn.shown{ opacity:1; }
-#restart-btn:hover,#credits-btn:hover{ color:#7a8090; }
-
-/* ── CREDITS ─────────────────────────────────────────── */
-#credits-screen{
-  position:fixed;inset:0;background:#000;z-index:190;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:40px 24px;opacity:0;pointer-events:none;transition:opacity 0.8s ease;text-align:center;
+#mg-fail-overlay.visible{opacity:1;pointer-events:all;}
+#mg-fail-box{
+  background:rgba(8,10,16,0.99);
+  border:1px solid rgba(255,255,255,0.18);
+  border-radius:4px;padding:30px 38px;text-align:center;max-width:400px;
+  box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 8px 40px rgba(0,0,0,0.9);
 }
-#credits-screen.active{ opacity:1;pointer-events:all; }
-#credits-screen h2{ font-size:clamp(16px,3vw,24px);color:#3a4250;letter-spacing:.22em;text-transform:uppercase;margin-bottom:32px; }
-#credits-screen p{ font-size:13px;color:#4a5060;line-height:2.2;letter-spacing:.06em; }
-#credits-screen .credit-role{ font-size:10px;color:#2a3040;letter-spacing:.2em;text-transform:uppercase;margin-top:16px; }
-#credits-back{ margin-top:40px;background:none;border:0.5px solid #2a3040;color:#3a4050;font-family:Georgia,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:9px 24px;cursor:pointer;transition:color .3s,border-color .3s; }
-#credits-back:hover{ color:#8a9098;border-color:#5a6070; }
+#mg-fail-msg{
+  font-size:clamp(13px,2vw,15px);color:#a04040;
+  letter-spacing:.06em;line-height:1.95;font-style:italic;
+  margin-bottom:22px;font-family:Georgia,serif;
+}
+#mg-retry-btn{
+  background:none;border:0.5px solid #3a4050;color:#6a7080;
+  font-family:Georgia,serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;
+  padding:10px 32px;cursor:pointer;transition:border-color .3s,color .3s;
+}
+#mg-retry-btn:hover,#mg-retry-btn:active{border-color:#6a7080;color:#9aa0a8;}
 
-/* ── GAME TITLE FOOTER ───────────────────────────────── */
-#game-title{ position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.35em;color:#141820;text-transform:uppercase;z-index:5;pointer-events:none; }
+/* ── CHOICE ── */
+#choice-screen{position:fixed;inset:0;z-index:30;display:flex;opacity:0;pointer-events:none;transition:opacity 0.5s ease;}
+#choice-screen.active{opacity:1;pointer-events:all;}
+.choice-half{flex:1;display:flex;align-items:center;justify-content:center;flex-direction:column;cursor:pointer;padding:24px;transition:background .3s;}
+.choice-half:first-child{border-right:.5px solid rgba(255,255,255,0.04);}
+.choice-half:hover,.choice-half:active{background:rgba(255,255,255,0.022);}
+.choice-label{font-size:clamp(12px,2.2vw,15px);line-height:1.8;color:#7a7870;text-align:center;max-width:220px;font-style:italic;}
+.choice-sublabel{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#2e3440;margin-top:10px;}
+#choice-timer{position:absolute;bottom:56px;left:0;right:0;text-align:center;font-size:28px;color:#2e3440;transition:color .3s;}
+#choice-timer.urgent{color:#8a2020;}
+.pulse-dot{width:7px;height:7px;border-radius:50%;background:#2a4050;animation:pdot 1.2s ease-in-out infinite;margin-bottom:18px;}
+@keyframes pdot{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:1;transform:scale(1.4)}}
+.pulse-dot.fast{animation-duration:.5s;}
+
+/* ── END SCREEN ── */
+#end-screen{position:fixed;inset:0;background:#000;z-index:180;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;opacity:0;pointer-events:none;transition:opacity 1s ease;}
+#end-screen.active{opacity:1;pointer-events:all;}
+#end-content{max-width:560px;text-align:left;}
+.end-line{font-size:15px;line-height:2;color:#b8b4a8;font-style:italic;opacity:0;transition:opacity 1.2s ease;display:block;}
+.end-line.shown{opacity:1;}
+#end-title-display{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#1e2530;margin-top:44px;text-align:center;opacity:0;transition:opacity 1s ease;}
+#end-buttons{display:flex;gap:24px;margin-top:28px;justify-content:center;}
+#restart-btn,#credits-btn{background:none;border:none;color:#2e3440;font-size:10px;letter-spacing:.2em;text-transform:uppercase;cursor:pointer;font-family:Georgia,serif;opacity:0;transition:opacity 1s ease,color .3s;}
+#restart-btn.shown,#credits-btn.shown{opacity:1;}
+#restart-btn:hover,#credits-btn:hover{color:#7a8090;}
+
+/* ── CREDITS ── */
+#credits-screen{position:fixed;inset:0;background:#000;z-index:190;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;opacity:0;pointer-events:none;transition:opacity 0.8s ease;text-align:center;}
+#credits-screen.active{opacity:1;pointer-events:all;}
+#credits-screen h2{font-size:clamp(16px,3vw,24px);color:#3a4250;letter-spacing:.22em;text-transform:uppercase;margin-bottom:32px;}
+#credits-screen p{font-size:13px;color:#4a5060;line-height:2.2;letter-spacing:.06em;}
+#credits-screen .credit-role{font-size:10px;color:#2a3040;letter-spacing:.2em;text-transform:uppercase;margin-top:16px;}
+#credits-back{margin-top:40px;background:none;border:0.5px solid #2a3040;color:#3a4050;font-family:Georgia,serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;padding:9px 24px;cursor:pointer;transition:color .3s,border-color .3s;}
+#credits-back:hover{color:#8a9098;border-color:#5a6070;}
+
+#game-title{position:fixed;bottom:12px;left:0;right:0;text-align:center;font-size:10px;letter-spacing:.35em;color:#141820;text-transform:uppercase;z-index:5;pointer-events:none;}
 </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div id="bg-layer"></div>
+<div id="bg-overlay"></div>
 <div id="progress-bar"></div>
 
 <!-- SPLASH -->
 <div id="splash-screen">
   <div id="splash-inner">
-    <div id="splash-title">
-      <span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral
-    </div>
+    <div id="splash-title"><span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral</div>
     <div id="splash-sub">par Ryan Debabêche</div>
     <button id="splash-btn">commencer</button>
   </div>
 </div>
 
-<!-- ACT OVERLAY -->
 <div id="act-overlay"><div id="act-title-text"></div></div>
-
-<!-- FADE -->
 <div id="fade-overlay"></div>
 
 <!-- LOCATION BANNER -->
@@ -316,9 +300,7 @@ html,body{ width:100%;height:100%;background:#060608;overflow:hidden;font-family
 <!-- SCENE -->
 <div id="scene">
   <div id="stage">
-    <div class="char-slot left hidden"   id="slot-left"></div>
-    <div class="char-slot right hidden"  id="slot-right"></div>
-    <div class="char-slot center hidden" id="slot-center"></div>
+    <div id="slot-main" class="hidden"></div>
   </div>
   <div id="dialogue-box">
     <div id="speaker-name"></div>
@@ -327,21 +309,18 @@ html,body{ width:100%;height:100%;background:#060608;overflow:hidden;font-family
   </div>
 </div>
 
-<!-- MINIGAME BANNER -->
-<div id="mg-banner">
-  <div id="mg-banner-inner">
-    <div id="mg-banner-title"></div>
-    <div id="mg-banner-sub"></div>
+<!-- MINIGAME -->
+<div id="mg-banner"><div id="mg-banner-inner"><div id="mg-banner-title"></div><div id="mg-banner-sub"></div></div></div>
+<div id="mg-counter-errors" style="display:none"><div><div class="mg-count-val" id="mg-err-val">0</div><div class="mg-count-label">erreurs</div></div></div>
+<div id="mg-counter-score"  style="display:none"><div><div class="mg-count-val" id="mg-score-val">0</div><div class="mg-count-label">réussites</div></div></div>
+<div id="minigame-container"><canvas id="minigame-canvas"></canvas></div>
+
+<!-- ECHEC MINI-JEU -->
+<div id="mg-fail-overlay">
+  <div id="mg-fail-box">
+    <div id="mg-fail-msg"></div>
+    <button id="mg-retry-btn">Réessayer</button>
   </div>
-</div>
-<div id="mg-counter-errors" style="display:none">
-  <div><div class="mg-count-val" id="mg-err-val">0</div><div class="mg-count-label">erreurs</div></div>
-</div>
-<div id="mg-counter-score" style="display:none">
-  <div><div class="mg-count-val" id="mg-score-val">0</div><div class="mg-count-label">réussites</div></div>
-</div>
-<div id="minigame-container">
-  <canvas id="minigame-canvas"></canvas>
 </div>
 
 <!-- CHOICE -->
@@ -359,10 +338,10 @@ html,body{ width:100%;height:100%;background:#060608;overflow:hidden;font-family
   <div id="choice-timer">10</div>
 </div>
 
-<!-- END SCREEN -->
+<!-- END -->
 <div id="end-screen">
   <div id="end-content"></div>
-  <div id="end-title-display"><span class="big">T</span>raitement&nbsp;<span class="big">M</span>oral</div>
+  <div id="end-title-display"><span style="font-size:1.18em;color:#5a6878">T</span>raitement&nbsp;<span style="font-size:1.18em;color:#5a6878">M</span>oral</div>
   <div id="end-buttons">
     <button id="restart-btn" onclick="restartGame()">recommencer</button>
     <button id="credits-btn" onclick="showCredits()">crédits</button>
@@ -373,38 +352,33 @@ html,body{ width:100%;height:100%;background:#060608;overflow:hidden;font-family
 <div id="credits-screen">
   <h2><span style="font-size:1.18em;color:#5a6878">T</span>raitement&nbsp;<span style="font-size:1.18em;color:#5a6878">M</span>oral</h2>
   <p style="color:#5a6070;font-style:italic;margin-bottom:24px">Un jeu narratif sur l'éthique médicale</p>
-  <p class="credit-role">Conception &amp; Narration</p>
-  <p>Ryan Debabêche</p>
-  <p class="credit-role">Travail de Maturité</p>
-  <p>2025</p>
+  <p class="credit-role">Conception &amp; Narration</p><p>Ryan Debabêche</p>
+  <p class="credit-role">Travail de Maturité</p><p>2025</p>
   <button id="credits-back" onclick="hideCredits()">retour</button>
 </div>
 
-<div id="game-title">
-  <span style="color:#1e2840;font-size:1.15em">T</span>raitement
-  <span style="color:#1e2840;font-size:1.15em">M</span>oral
-</div>
+<div id="game-title"><span style="color:#1e2840;font-size:1.15em">T</span>raitement <span style="color:#1e2840;font-size:1.15em">M</span>oral</div>
 
-<!-- Portrait store (images des personnages) -->
+<!-- Portrait store -->
 <div id="portrait-store" style="display:none">
-  <img id="p_marc"           src="images/claude_neutre.png">
-  <img id="p_marc_pensif"    src="images/claude_pensif.png">
-  <img id="p_marc_inquiet"   src="images/claude_inquiet.png">
-  <img id="p_marc_souriant"  src="images/claude_souriant.png">
-  <img id="p_marc_serieux"   src="images/claude_serieux.png">
-  <img id="p_marc_masque"    src="images/claude_masque.png">
-  <img id="p_marc_masque2"   src="images/claude_masque2.png">
-  <img id="p_thomas"         src="images/gerard_calme.png">
-  <img id="p_thomas_souriant"src="images/gerard_souriant.png">
-  <img id="p_antoine"        src="images/antoine_neutre.png">
-  <img id="p_antoine_nerveux"src="images/antoine_nerveux.png">
-  <img id="p_antoine_masque" src="images/antoine_masque.png">
-  <img id="p_lucas"          src="images/lucas_inquiet.png">
-  <img id="p_lucas_triste"   src="images/lucas_triste.png">
-  <img id="p_lucas_admiratif"src="images/lucas_admiratif.png">
-  <img id="p_lucas_content"  src="images/lucas_content.png">
-  <img id="p_lucas_soucieux" src="images/lucas_soucieux.png">
-  <img id="p_infirmiere"     src="images/infirmiere_neutre.png">
+  <img id="p_claude"          src="images/claude_neutre.png">
+  <img id="p_claude_pensif"   src="images/claude_pensif.png">
+  <img id="p_claude_inquiet"  src="images/claude_inquiet.png">
+  <img id="p_claude_souriant" src="images/claude_souriant.png">
+  <img id="p_claude_serieux"  src="images/claude_serieux.png">
+  <img id="p_claude_masque"   src="images/claude_masque.png">
+  <img id="p_claude_masque2"  src="images/claude_masque2.png">
+  <img id="p_gerard"          src="images/gerard_calme.png">
+  <img id="p_gerard_souriant" src="images/gerard_souriant.png">
+  <img id="p_antoine"         src="images/antoine_neutre.png">
+  <img id="p_antoine_nerveux" src="images/antoine_nerveux.png">
+  <img id="p_antoine_masque"  src="images/antoine_masque.png">
+  <img id="p_lucas"           src="images/lucas_inquiet.png">
+  <img id="p_lucas_triste"    src="images/lucas_triste.png">
+  <img id="p_lucas_admiratif" src="images/lucas_admiratif.png">
+  <img id="p_lucas_content"   src="images/lucas_content.png">
+  <img id="p_lucas_soucieux"  src="images/lucas_soucieux.png">
+  <img id="p_infirmiere"      src="images/infirmiere_neutre.png">
 </div>
 
 <script src="engine.js"></script>
