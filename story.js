@@ -262,13 +262,21 @@ async function startGame(){
   AC = new (window.AudioContext||window.webkitAudioContext)();
   window._actx=AC;
   initMusic();
-  // Musique + fond dès l'écran titre
-  await setBgScene('hospital');
+
+  // Fond hospital immédiat (sans animation, le splash est devant)
+  const layer=document.getElementById('bg-layer');
+  layer.style.backgroundImage="url('images/bg_hospital.jpg')";
+  _currentBg='images/bg_hospital.jpg';
+
+  // Lancer la musique
   playMusicAmbiance();
+
+  // Cacher le splash
   const splash=document.getElementById('splash-screen');
   splash.classList.add('hiding');
   await sleep(900);
   splash.style.display='none';
+
   await runGame();
 }
 
