@@ -46,10 +46,11 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
 #scene{position:fixed;inset:0;z-index:10;pointer-events:none;opacity:0;transition:opacity 0.5s ease;}
 #scene.visible{opacity:1;pointer-events:auto;}
 
-/* DIALOGUE BOX — hauteur fixe */
+/* ── DIALOGUE BOX ── */
+/* Hauteur fixe, assez grande pour les grands sprites */
 #dialogue-box{
   position:fixed;bottom:0;left:0;right:0;
-  height:clamp(155px,22vh,190px);
+  height:clamp(170px,24vh,210px);
   z-index:20;
   background:rgba(5,6,10,0.97);
   border-top:1px solid rgba(255,255,255,0.20);
@@ -58,46 +59,56 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
 }
 #dialogue-box::before{content:'';position:absolute;top:-1px;left:4%;right:4%;height:1px;background:linear-gradient(90deg,transparent,rgba(160,200,230,0.18) 35%,rgba(160,200,230,0.28) 50%,rgba(160,200,230,0.18) 65%,transparent);}
 
-/* STAGE — #1 : bas du sprite aligné exactement avec le haut de la boîte */
+/* ── STAGE — sprite 2× plus grand, collé juste au-dessus du nom ── */
+/*
+  Le sprite est positionné de sorte que son bas visible (la ligne de découpe)
+  soit exactement au niveau du haut de la boîte de dialogue.
+  2× plus grand = on double la hauteur du conteneur.
+*/
 #stage{
   position:fixed;
-  bottom:clamp(155px,22vh,190px); /* = hauteur boîte */
+  bottom:clamp(170px,24vh,210px); /* = hauteur boîte exacte */
   left:0;
-  width:clamp(105px,15vw,165px);
-  height:clamp(185px,29vh,285px);
+  width:clamp(180px,28vw,300px);  /* 2× plus large */
+  height:clamp(320px,52vh,520px); /* 2× plus haut */
   pointer-events:none;
   z-index:21;
-  overflow:hidden; /* cache tout ce qui dépasse vers le bas */
+  overflow:hidden; /* masque la ligne de découpe */
 }
-#slot-main{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:flex-start;transition:opacity 0.25s ease,filter 0.25s ease;}
+#slot-main{
+  position:absolute;inset:0;
+  display:flex;align-items:flex-end;justify-content:flex-start;
+  transition:opacity 0.25s ease,filter 0.25s ease;
+}
 #slot-main.hidden{opacity:0;}
 #slot-main img{
   width:100%;height:auto;
   object-fit:contain;object-position:bottom left;
   display:block;
-  filter:drop-shadow(0 0 3px rgba(0,0,0,1)) drop-shadow(0 6px 18px rgba(0,0,0,0.95));
+  filter:drop-shadow(0 0 4px rgba(0,0,0,1)) drop-shadow(0 8px 24px rgba(0,0,0,0.95));
 }
 #slot-main.dimmed img{filter:brightness(0.22) saturate(0.1) grayscale(0.8) drop-shadow(0 0 2px #000);}
 
-/* Nom du speaker */
+/* Nom du speaker — à droite du sprite, en haut de la boîte */
 #speaker-name{
-  position:absolute;top:10px;
-  left:clamp(113px,16vw,173px);right:16px;
+  position:absolute;top:11px;
+  left:clamp(188px,29vw,308px); /* = largeur stage + petit gap */
+  right:16px;
   font-size:clamp(13px,2vw,15px);font-family:Georgia,serif;
   letter-spacing:.22em;text-transform:uppercase;color:#b8c8d4;
   border-left:2px solid rgba(90,140,180,0.5);padding-left:9px;line-height:1;
   display:none;
 }
 
-/* #2 : texte plus grand */
+/* Texte dialogue */
 #dialogue-text{
-  position:absolute;top:34px;bottom:32px;
-  left:clamp(113px,16vw,173px);right:16px;
+  position:absolute;top:35px;bottom:32px;
+  left:clamp(188px,29vw,308px);right:16px;
   font-size:clamp(16px,2.4vw,19px);
   line-height:1.88;color:#dedad4;overflow:hidden;
 }
 
-/* #3 : indications scéniques centrées, italique */
+/* Indications scéniques : centrées, italique, guillemets */
 #dialogue-text.thought{
   color:#848280;font-style:italic;
   left:20px;right:20px;
@@ -106,7 +117,7 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
   font-size:clamp(14px,2.1vw,17px);
 }
 
-/* Narration sans speaker */
+/* Mode narration */
 #dialogue-box.narration #speaker-name{display:none!important;}
 #dialogue-box.narration #dialogue-text{left:20px;right:20px;}
 
@@ -121,11 +132,11 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
 #minigame-container.active{opacity:1;pointer-events:all;}
 #minigame-canvas{touch-action:none;display:block;}
 
-/* #6 : MG banner remplace lieu/heure (même style, même position) */
+/* MG Banner */
 #mg-banner{position:fixed;left:0;right:0;z-index:96;display:flex;align-items:center;justify-content:center;pointer-events:none;opacity:0;top:50%;transform:translateY(-50%);transition:top 0.7s cubic-bezier(.4,0,.2,1),transform 0.7s cubic-bezier(.4,0,.2,1),opacity 0.4s ease;}
 #mg-banner.center{opacity:1;top:50%;transform:translateY(-50%);}
 #mg-banner.top{opacity:1;top:8px;transform:translateY(0) scale(0.78);}
-#mg-banner-inner{background:rgba(4,5,8,0.97);border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:18px 36px;text-align:center;box-shadow:0 0 0 1px rgba(255,255,255,0.04);}
+#mg-banner-inner{background:rgba(4,5,8,0.97);border:1px solid rgba(255,255,255,0.20);border-radius:3px;padding:18px 36px;text-align:center;}
 #mg-banner.top #mg-banner-inner{padding:11px 26px;}
 #mg-banner-title{font-size:clamp(17px,3.2vw,26px);color:#7a8898;letter-spacing:.2em;text-transform:uppercase;margin-bottom:7px;transition:font-size 0.6s;}
 #mg-banner.top #mg-banner-title{font-size:clamp(10px,1.6vw,12px);margin-bottom:2px;}
@@ -140,10 +151,10 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
 #mg-counter-errors .mg-count-val{color:#8a3232;}#mg-counter-errors .mg-count-label{color:#4a2828;}
 #mg-counter-score .mg-count-val{color:#3a7080;}#mg-counter-score .mg-count-label{color:#2a4050;}
 
-/* #9 : écran échec — encadré propre, juste le message + réessayer */
+/* Écran échec */
 #mg-fail-overlay{position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(4,5,8,0.93);opacity:0;pointer-events:none;transition:opacity 0.4s ease;}
 #mg-fail-overlay.visible{opacity:1;pointer-events:all;}
-#mg-fail-box{background:rgba(8,10,16,0.99);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:30px 38px;text-align:center;max-width:400px;box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 8px 40px rgba(0,0,0,0.9);}
+#mg-fail-box{background:rgba(8,10,16,0.99);border:1px solid rgba(255,255,255,0.18);border-radius:4px;padding:30px 38px;text-align:center;max-width:420px;box-shadow:0 0 0 1px rgba(255,255,255,0.04),0 8px 40px rgba(0,0,0,0.9);}
 #mg-fail-msg{font-size:clamp(13px,2vw,15px);color:#a04040;letter-spacing:.06em;line-height:1.95;font-style:italic;margin-bottom:22px;font-family:Georgia,serif;}
 #mg-retry-btn{background:none;border:0.5px solid #3a4050;color:#6a7080;font-family:Georgia,serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;padding:10px 32px;cursor:pointer;transition:border-color .3s,color .3s;}
 #mg-retry-btn:hover,#mg-retry-btn:active{border-color:#6a7080;color:#9aa0a8;}
@@ -165,8 +176,8 @@ html,body{width:100%;height:100%;background:#060608;overflow:hidden;font-family:
 /* END */
 #end-screen{position:fixed;inset:0;background:#000;z-index:180;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;opacity:0;pointer-events:none;transition:opacity 1s ease;}
 #end-screen.active{opacity:1;pointer-events:all;}
-#end-content{max-width:560px;text-align:left;}
-.end-line{font-size:15px;line-height:2;color:#b8b4a8;font-style:italic;opacity:0;transition:opacity 1.2s ease;display:block;}
+#end-content{max-width:580px;text-align:left;}
+.end-line{font-size:15px;line-height:2.1;color:#b8b4a8;font-style:italic;opacity:0;transition:opacity 1.2s ease;display:block;}
 .end-line.shown{opacity:1;}
 #end-title-display{font-size:10px;letter-spacing:.4em;text-transform:uppercase;color:#1e2530;margin-top:44px;text-align:center;opacity:0;transition:opacity 1s ease;}
 #end-buttons{display:flex;gap:24px;margin-top:28px;justify-content:center;}
